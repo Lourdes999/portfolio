@@ -1,0 +1,502 @@
+---
+// Projects.astro — Sección "Proyectos" (carrusel)
+
+// ===== DATOS DE LOS PROYECTOS (editá acá sin tocar el diseño) =====
+// Si demo o repo quedan vacíos (''), su botón no aparece
+// Si imagen queda vacía (''), se muestra una portada provisoria con el nombre
+const proyectos = [
+  {
+    nombre: 'El Ceibo Rojas · Catálogo web',
+    descripcion: 'Catálogo web para un emprendimiento real, pensado para mostrar los productos de forma visual y ordenada. Incluye filtros por peso y precio, carruseles de imágenes y precios que cambian según la modalidad de compra.',
+    rol: 'Individual · Diseño de la interfaz y desarrollo completo',
+    tecnologias: ['HTML', 'CSS', 'JavaScript', 'Python'],
+    imagen: '/images/catalogo-emprendimiento.jpg',
+    demo: 'https://elceiborojas.netlify.app/',
+    repo: 'https://github.com/Lourdes999/el-ceibo-rojas',
+    enDesarrollo: false,
+    nota: '',
+  },
+  {
+    nombre: 'Sistema de gestión de ventas',
+    descripcion: 'Sistema en Python conectado a SQL Server que centraliza la información de ventas y productos, y automatiza procesos de gestión.',
+    rol: 'Individual · Lógica del sistema, desarrollo en Python y diseño de la base de datos',
+    tecnologias: ['Python', 'SQL Server'],
+    imagen: '/images/sistema-ventas.jpg',
+    demo: '',
+    repo: '', // Cuando lo subas a GitHub, pegá el link acá
+    enDesarrollo: false,
+    nota: '',
+  },
+  {
+    nombre: 'Red Emprendedora',
+    descripcion: 'Plataforma web colaborativa que nace de una problemática real: centralizar la información de emprendimientos, eventos, stands y localidades para darles más visibilidad y facilitar su organización.',
+    rol: 'En equipo · Diseño de la base de datos (tablas USUARIO_ROL y LOCALIDAD) e integración con el resto del equipo',
+    tecnologias: ['Python', 'PostgreSQL', 'HTML', 'CSS', 'Git', 'GitHub'],
+    imagen: '', // Vacía = portada provisoria. Cuando tengas la captura: '/images/red-emprendedora.jpg'
+    demo: '',
+    repo: 'https://github.com/camiestevez25-netizen/bd_redEmprendedora',
+    enDesarrollo: true,
+    nota: 'Próximo paso: el frontend.',
+  },
+];
+
+// Formatea números como "01", "02"...
+const dosDigitos = (n: number) => String(n).padStart(2, '0');
+
+// Perfil de GitHub (link general debajo del carrusel)
+const github = 'https://github.com/Lourdes999';
+---
+<section class="seccion proyectos" id="proyectos">
+
+  <!-- ===== FONDO: patrón de rombos en movimiento ===== -->
+  <div class="fondo" aria-hidden="true">
+    <svg>
+      <defs>
+        <!-- Una "baldosa" de 160×160 que se repite en todo el fondo -->
+        <pattern id="patron-rombos" width="160" height="160" patternUnits="userSpaceOnUse">
+          <g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round">
+            <path d="M80 12 L148 80 L80 148 L12 80 Z" />                            <!-- Rombo exterior -->
+            <path d="M80 30 L130 80 L80 130 L30 80 Z" stroke-dasharray="4 10" />   <!-- Rombo "costura" -->
+            <path d="M80 48 L112 80 L80 112 L48 80 Z" />                            <!-- Rombo interior -->
+          </g>
+          <path d="M80 70 L90 80 L80 90 L70 80 Z" fill="currentColor" />           <!-- Centro -->
+          <g fill="currentColor">                                                   <!-- Puntos en las esquinas -->
+            <circle cx="0" cy="0" r="5" /><circle cx="160" cy="0" r="5" />
+            <circle cx="0" cy="160" r="5" /><circle cx="160" cy="160" r="5" />
+          </g>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#patron-rombos)" />
+    </svg>
+  </div>
+
+  <!-- ===== ENCABEZADO: título + contador ===== -->
+  <header class="proyectos__encabezado">
+    <h2 class="proyectos__titulo reveal">Proyectos</h2>
+    <p class="contador reveal" aria-live="polite">
+      <span class="contador__actual" data-actual>01</span>
+      <span class="contador__total">/ {dosDigitos(proyectos.length)}</span>
+    </p>
+  </header>
+
+  <!-- ===== CARRUSEL ===== -->
+  <div class="carrusel reveal" style="transition-delay: 0.2s">
+    <div class="carrusel__pista">
+      {proyectos.map((p, i) => (
+        <article class="tarjeta" aria-label={`Proyecto ${i + 1} de ${proyectos.length}`}>
+
+          <!-- Captura: si el proyecto no tiene imagen, muestra una portada provisoria -->
+          <figure class="tarjeta__captura">
+            {p.imagen ? (
+              <img src={p.imagen} alt={`Captura de ${p.nombre}`} loading="lazy" onerror="this.remove()" />
+            ) : (
+              <div class="provisoria">
+                <svg class="provisoria__fondo" aria-hidden="true">
+                  <rect width="100%" height="100%" fill="url(#patron-rombos)" /> <!-- Mismo patrón del fondo -->
+                </svg>
+                <span class="provisoria__nombre">{p.nombre}</span>
+                <span class="provisoria__estado">Frontend en construcción<span class="cursor">_</span></span>
+              </div>
+            )}
+          </figure>
+
+          <!-- Información -->
+          <div class="tarjeta__info">
+            <span class={`estado ${p.enDesarrollo ? 'estado--dev' : ''}`}>
+              {p.enDesarrollo ? 'En desarrollo' : 'Terminado'}
+            </span>
+
+            <h3 class="tarjeta__nombre">{p.nombre}</h3>
+            <p class="tarjeta__descripcion">{p.descripcion}</p>
+            {p.nota && <p class="tarjeta__nota">{p.nota}</p>}
+
+            <p class="tarjeta__rol"><span>Mi rol</span>{p.rol}</p>
+
+            <ul class="etiquetas">
+              {p.tecnologias.map((t) => <li><span class="etiqueta">{t}</span></li>)}
+            </ul>
+
+            {(p.demo || p.repo) && (
+              <div class="botones">
+                {p.demo && <a class="boton boton--lleno" href={p.demo} target="_blank" rel="noopener">Ver proyecto ↗</a>}
+                {p.repo && <a class="boton" href={p.repo} target="_blank" rel="noopener">Código ↗</a>}
+              </div>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <!-- Controles: flecha · barra de progreso · flecha -->
+    <div class="controles">
+      <button class="flecha" data-prev aria-label="Proyecto anterior">←</button>
+      <div class="progreso"><span class="progreso__barra" data-barra></span></div>
+      <button class="flecha" data-next aria-label="Proyecto siguiente">→</button>
+    </div>
+
+    <!-- Link general a GitHub -->
+    <a class="ver-github" href={github} target="_blank" rel="noopener">Ver todos mis proyectos en GitHub ↗</a>
+  </div>
+</section>
+
+<style>
+  /* ---------- ESTRUCTURA ---------- */
+  .proyectos {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3vh;
+    padding: 10vh 5.6vw 6vh;
+    background: var(--olive);
+    color: var(--crema);
+  }
+
+  /* ---------- FONDO CON PATRÓN ---------- */
+  .fondo {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .fondo svg {
+    position: absolute;
+    top: -160px;  /* Una baldosa extra para que el movimiento no deje huecos */
+    left: -160px;
+    width: calc(100% + 160px);
+    height: calc(100% + 160px);
+    color: var(--olive-claro); /* Color del patrón */
+    opacity: 0.3;              /* Intensidad: subilo para que se note más */
+    animation: deriva 24s linear infinite; /* Velocidad: más segundos = más lento */
+  }
+
+  /* El contenido va por encima del fondo */
+  .proyectos__encabezado,
+  .carrusel {
+    position: relative;
+    z-index: 1;
+    margin-right: 3vw; /* Deja lugar a los puntitos de navegación */
+  }
+
+  /* ---------- ENCABEZADO ---------- */
+  .proyectos__encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .proyectos__titulo {
+    font-family: var(--fuente-titulo);
+    font-weight: 500;
+    font-size: clamp(3rem, 6.5vw, 8rem);
+    letter-spacing: -0.045em;
+    line-height: 1;
+  }
+  .contador {
+    font-family: var(--fuente-titulo);
+    line-height: 1;
+  }
+  .contador__actual { font-size: clamp(2.5rem, 4vw, 4.5rem); font-weight: 500; }
+  .contador__total  { font-size: clamp(1rem, 1.5vw, 1.5rem); opacity: 0.7; }
+
+  /* ---------- PISTA DEL CARRUSEL ---------- */
+  .carrusel__pista {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory; /* Cada tarjeta encaja al deslizar */
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;         /* Oculta la barra de scroll (Firefox) */
+  }
+  .carrusel__pista::-webkit-scrollbar { display: none; } /* Oculta la barra (Chrome) */
+
+  /* ---------- TARJETA ---------- */
+  .tarjeta {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr; /* Captura | información */
+    gap: 3rem;
+    align-items: center;
+    padding: clamp(1.5rem, 3vw, 3rem);
+    background: var(--crema);
+    color: var(--tinta);
+    border-radius: 16px;
+    /* Las tarjetas que no están activas se achican y se apagan al deslizar */
+    opacity: 0.35;
+    transform: scale(0.94);
+    transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+  }
+  .tarjeta.activa {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Captura con el mismo marco oliva de "Sobre mí" */
+  .tarjeta__captura {
+    margin: 0;
+    aspect-ratio: 16 / 10;
+    border: 8px solid var(--olive);
+    background: var(--arena);
+    overflow: hidden;
+  }
+  .tarjeta__captura img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--ease);
+  }
+  .tarjeta__captura:hover img { transform: scale(1.05); }
+
+  /* ---------- PORTADA PROVISORIA (proyectos sin captura) ---------- */
+  .provisoria {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    padding: 1.5rem;
+    text-align: center;
+    background: var(--terracota);
+    color: var(--crema);
+    overflow: hidden;
+  }
+  .provisoria__fondo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.25; /* Intensidad del patrón */
+  }
+  .provisoria__nombre {
+    position: relative;
+    font-family: var(--fuente-titulo);
+    font-weight: 500;
+    font-size: clamp(1.8rem, 3.2vw, 3.4rem);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    text-shadow: 0.04em 0.04em 0 var(--chile-rojo); /* Sombra sólida, como "portfolio" */
+  }
+  .provisoria__estado {
+    position: relative;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.9;
+  }
+  /* Cursor que titila, como en una terminal */
+  .cursor {
+    animation: parpadeo 1s steps(1) infinite;
+  }
+
+  /* Etiqueta de estado */
+  .estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.3rem 0.9rem;
+    border-radius: 999px;
+    background: var(--olive);
+    color: var(--crema);
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .estado--dev { background: var(--terracota); }
+  /* Puntito que "late" en los proyectos en desarrollo */
+  .estado--dev::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--crema);
+    animation: latido 1.4s ease-in-out infinite;
+  }
+
+  .tarjeta__nombre {
+    font-family: var(--fuente-titulo);
+    font-weight: 500;
+    color: var(--chile-rojo);
+    font-size: clamp(1.6rem, 2.6vw, 2.8rem);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+  .tarjeta__descripcion {
+    font-size: clamp(0.95rem, 1.05vw, 1.1rem);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+  .tarjeta__nota {
+    color: var(--terracota);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  .tarjeta__rol {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1.2rem;
+  }
+  .tarjeta__rol span { /* "MI ROL" */
+    display: block;
+    margin-bottom: 0.3rem;
+    color: var(--chile-rojo);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  /* Etiquetas un poco más chicas dentro de la tarjeta */
+  .tarjeta .etiqueta {
+    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  /* ---------- BOTONES ---------- */
+  .botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+  }
+  .boton {
+    padding: 0.7rem 1.4rem;
+    border: 2px solid var(--chile-rojo);
+    border-radius: 999px;
+    color: var(--chile-rojo);
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  }
+  .boton--lleno {
+    background: var(--chile-rojo);
+    color: var(--crema);
+  }
+  .boton:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 3px 3px 0 var(--olive);
+  }
+
+  /* ---------- CONTROLES ---------- */
+  .controles {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 2.5vh;
+  }
+  .flecha {
+    width: 3.2rem;
+    height: 3.2rem;
+    flex-shrink: 0;
+    border: 2px solid var(--crema);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--crema);
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+  }
+  .flecha:hover {
+    background: var(--crema);
+    color: var(--chile-rojo);
+  }
+  .progreso {
+    flex: 1;
+    height: 3px;
+    border-radius: 3px;
+    background: rgba(244, 239, 228, 0.3);
+    overflow: hidden;
+  }
+  .progreso__barra {
+    display: block;
+    height: 100%;
+    background: var(--crema);
+    transition: width 0.5s var(--ease);
+  }
+
+  /* Link general a GitHub */
+  .ver-github {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding-bottom: 0.2rem;
+    border-bottom: 1px solid var(--crema);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: opacity 0.3s;
+  }
+  .ver-github:hover {
+    opacity: 0.7;
+  }
+
+  /* ---------- ANIMACIONES ---------- */
+  @keyframes deriva {
+    to { transform: translate(160px, 160px); } /* Se mueve exactamente una baldosa: el bucle no se nota */
+  }
+  @keyframes latido {
+    50% { opacity: 0.3; transform: scale(0.7); }
+  }
+  @keyframes parpadeo {
+    50% { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fondo svg { animation: none; }
+  }
+
+  /* ---------- CELULAR: captura arriba, información abajo ---------- */
+  @media (max-width: 768px) {
+    .proyectos { padding: 10vh 1.5rem 5vh; }
+    .proyectos__encabezado,
+    .carrusel { margin-right: 1rem; }
+    .tarjeta {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+</style>
+
+<script>
+  const seccion = document.querySelector<HTMLElement>('#proyectos')!;
+  const pista = seccion.querySelector<HTMLElement>('.carrusel__pista')!;
+  const tarjetas = [...seccion.querySelectorAll<HTMLElement>('.tarjeta')];
+  const actual = seccion.querySelector<HTMLElement>('[data-actual]')!;
+  const barra = seccion.querySelector<HTMLElement>('[data-barra]')!;
+  let indice = 0;
+
+  // Mueve el carrusel a la tarjeta i (después de la última, vuelve a la primera)
+  function irA(i: number) {
+    indice = (i + tarjetas.length) % tarjetas.length;
+    pista.scrollTo({ left: pista.clientWidth * indice, behavior: 'smooth' });
+  }
+
+  // Actualiza contador, barra de progreso y tarjeta activa
+  function actualizar(i: number) {
+    indice = i;
+    actual.textContent = String(i + 1).padStart(2, '0');
+    barra.style.width = `${((i + 1) / tarjetas.length) * 100}%`;
+    tarjetas.forEach((t, j) => t.classList.toggle('activa', j === i));
+  }
+
+  // Detecta qué tarjeta está visible (funciona con flechas y al deslizar con el dedo)
+  const obs = new IntersectionObserver((entradas) => {
+    entradas.forEach((e) => {
+      if (e.isIntersecting) actualizar(tarjetas.indexOf(e.target as HTMLElement));
+    });
+  }, { root: pista, threshold: 0.6 });
+  tarjetas.forEach((t) => obs.observe(t));
+
+  // Botones de flecha
+  seccion.querySelector('[data-prev]')!.addEventListener('click', () => irA(indice - 1));
+  seccion.querySelector('[data-next]')!.addEventListener('click', () => irA(indice + 1));
+
+  // Teclas ← → : solo cuando la sección Proyectos está en pantalla
+  document.addEventListener('keydown', (e) => {
+    if ((e.target as HTMLElement).closest('input, textarea, select')) return;
+    const enPantalla = Math.abs(seccion.getBoundingClientRect().top) < window.innerHeight / 2;
+    if (!enPantalla) return;
+    if (e.key === 'ArrowRight') { e.preventDefault(); irA(indice + 1); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); irA(indice - 1); }
+  });
+
+  actualizar(0);
+</script>

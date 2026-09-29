@@ -1,0 +1,120 @@
+/* =========================================
+   global.css — Estilos generales del sitio
+   ========================================= */
+
+/* ---------- 1. FUENTES LOCALES (archivos en public/fonts/) ---------- */
+/* Si tus archivos son .otf o .ttf, cambiá la extensión y el format:
+   .otf → format('opentype')   |   .ttf → format('truetype') */
+@font-face {
+  font-family: 'Garet';
+  src: url('/fonts/Garet-Book.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'The Youngest Script';
+  src: url('/fonts/TheYoungestScript.woff2') format('woff2');
+  font-display: swap;
+}
+
+/* ---------- 2. VARIABLES (colores, fuentes, animación) ---------- */
+:root {
+  /* Paleta */
+  --arena: #E7E0D4;  /* Fondo de secciones claras (más oscuro que el crema) */
+  --tinta: #4A3B2F;  /* Texto de párrafos sobre fondos claros */
+  --olive: #8A8635;       /* Fondo principal */
+  --chile-rojo: #AE431E;  /* Títulos, espirales, detalles */
+  --terracota: #D06224;   /* Hovers y acentos secundarios */
+  --crema: #F4EFE4;       /* Paneles claros y texto sobre olive */
+
+  /* Tipografías (la segunda es el respaldo) */
+  --fuente-titulo: 'Bricolage Grotesque', sans-serif;
+  --fuente-texto: 'Garet', 'Urbanist', sans-serif;
+  --fuente-firma: 'The Youngest Script', 'Mrs Saint Delafield', cursive;
+
+  /* Curva de movimiento usada en todo el sitio */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --transicion: 0.6s var(--ease);
+}
+
+/* ---------- 3. RESET BÁSICO ---------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-snap-type: y mandatory; /* Cada scroll "encaja" en una sección */
+}
+
+body {
+  font-family: var(--fuente-texto);
+  background: var(--olive);
+  color: var(--crema);
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+
+/* ---------- 4. SECCIONES (cada "diapositiva") ---------- */
+.seccion {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;       /* Alto real en celulares */
+  scroll-snap-align: start; /* Punto donde encaja el scroll */
+  overflow-x: hidden;
+}
+
+/* ---------- 5. APARICIÓN AL ENTRAR EN PANTALLA ---------- */
+/* Agregale class="reveal" a cualquier elemento para que aparezca deslizándose */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity var(--transicion), transform var(--transicion);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- 6. CELULAR ---------- */
+@media (max-width: 768px) {
+  html { scroll-snap-type: y proximity; } /* Encaje más suave para no trabar secciones largas */
+}
+
+/* ---------- 7. ACCESIBILIDAD: usuarios que prefieren menos movimiento ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}
+
+/* ---------- 8. ETIQUETAS (usadas en Sobre mí y Proyectos) ---------- */
+.etiquetas {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+.etiqueta {
+  display: inline-block;
+  padding: 0.55rem 1.2rem;
+  border: 2px solid var(--chile-rojo);
+  border-radius: 999px;
+  color: var(--chile-rojo);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  cursor: default;
+  transition: background 0.3s, color 0.3s, transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+/* Al pasar el mouse: se rellena y "levanta" con la sombra oliva */
+.etiqueta:hover {
+  background: var(--chile-rojo);
+  color: var(--crema);
+  transform: translate(-3px, -3px);
+  box-shadow: 3px 3px 0 var(--olive);
+}

@@ -1,0 +1,188 @@
+---
+// About.astro — Sección "Sobre mí"
+
+// ===== TEXTOS (editá acá sin tocar el diseño) =====
+const intro = 'Estudio Desarrollo de Software y soy Técnica en Informática. Me muevo entre el código, los datos y el diseño: me gusta que lo que hago funcione bien y también se vea bien.';
+const parrafo = 'Además de proyectos académicos, desarrollo proyectos propios y trabajé en informática y emprendimientos. Ahí aprendí que antes de escribir una línea de código hay que entender qué necesita quien lo va a usar.';
+const etiquetas = ['Código', 'Datos', 'Diseño de sistemas', 'Automatización', 'Identidad visual'];
+
+// ===== FOTO (guardala en public/images/) =====
+const foto = '/images/foto-perfil.jpg';
+
+// ===== PATRÓN DE LÍNEAS (se genera solo) =====
+// Arco en forma de "∩": centro (cx, cy), radio r, patas hasta yFin
+const arco = (cx: number, cy: number, r: number, yFin: number) =>
+  `M${cx - r},${yFin} L${cx - r},${cy} A${r},${r} 0 0 1 ${cx + r},${cy} L${cx + r},${yFin}`;
+
+// Línea vertical de y1 a y2
+const linea = (x: number, y1: number, y2: number) => `M${x},${y1} L${x},${y2}`;
+
+// Cada grupo es una zona del patrón. Cambiá los números para mover o sumar líneas
+const trazos = [
+  // Arcos grandes (arriba a la derecha)
+  ...[45, 80, 115, 150].map((r) => arco(430, 210, r, 1080)),
+  // Líneas que caen desde arriba (izquierda)
+  ...[30, 65, 100, 135, 170, 205].map((x, i) => linea(x, 0, [210, 160, 240, 130, 190, 150][i])),
+  // Líneas largas del costado izquierdo
+  ...[30, 65].map((x) => linea(x, 320, 860)),
+  // Arcos chicos (abajo a la izquierda)
+  ...[35, 70, 105, 140].map((r) => arco(170, 990, r, 1080)),
+];
+---
+<section class="seccion sobre-mi" id="sobre-mi">
+
+  <!-- ===== COLUMNA DE TEXTO ===== -->
+  <div class="sobre-mi__texto">
+    <h2 class="sobre-mi__titulo reveal">Sobre mí</h2>
+
+    <p class="sobre-mi__intro reveal" style="transition-delay: 0.15s">{intro}</p>
+    <p class="sobre-mi__parrafo reveal" style="transition-delay: 0.3s">{parrafo}</p>
+
+    <h3 class="sobre-mi__subtitulo reveal" style="transition-delay: 0.45s">Me gusta explorar</h3>
+    <ul class="etiquetas">
+      {etiquetas.map((texto, i) => (
+        <li class="reveal" style={`transition-delay: ${0.5 + i * 0.08}s`}>
+          <span class="etiqueta">{texto}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <!-- ===== COLUMNA VISUAL: patrón + marco con foto ===== -->
+  <div class="sobre-mi__visual">
+    <svg class="patron reveal" viewBox="0 0 600 1080" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      {trazos.map((d, i) => (
+        <path d={d} pathLength="1" style={`animation-delay: ${i * 0.06}s`} />
+      ))}
+    </svg>
+
+    <figure class="marco reveal" style="transition-delay: 0.4s">
+      <!-- Si la foto no existe todavía, se oculta y queda el fondo crema -->
+      <img src={foto} alt="Foto de Lourdes Melo" loading="lazy" onerror="this.remove()" />
+    </figure>
+  </div>
+</section>
+
+<style>
+  /* ---------- ESTRUCTURA: texto | visual ---------- */
+  .sobre-mi {
+    display: grid;
+    grid-template-columns: 1fr 31%;
+    gap: 4vw;
+    background: var(--arena);
+    color: var(--tinta);
+  }
+
+  /* ---------- COLUMNA DE TEXTO ---------- */
+  .sobre-mi__texto {
+    padding: 15vh 0 10vh 5.6vw; /* Mismo margen izquierdo que la portada */
+    max-width: 46rem;
+  }
+
+  .sobre-mi__titulo {
+    font-family: var(--fuente-titulo);
+    font-weight: 500;
+    color: var(--chile-rojo);
+    font-size: clamp(3rem, 6.5vw, 8rem);
+    letter-spacing: -0.045em;
+    line-height: 1;
+    margin-bottom: 2.5rem;
+  }
+
+  /* Introducción: más grande y en rojo */
+  .sobre-mi__intro {
+    font-family: var(--fuente-titulo);
+    color: var(--chile-rojo);
+    font-size: clamp(1.2rem, 1.7vw, 1.75rem);
+    line-height: 1.45;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Párrafo normal */
+  .sobre-mi__parrafo {
+    font-size: clamp(1rem, 1.1vw, 1.15rem);
+    line-height: 1.7;
+    max-width: 40rem;
+    margin-bottom: 2.5rem;
+  }
+
+  /* "ME GUSTA EXPLORAR" */
+  .sobre-mi__subtitulo {
+    font-family: var(--fuente-texto);
+    font-weight: 400;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  /* ---------- COLUMNA VISUAL ---------- */
+  .sobre-mi__visual {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 3vw; /* Deja lugar a los puntitos de navegación */
+  }
+
+  /* Patrón de líneas */
+  .patron {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .patron path {
+    fill: none;
+    stroke: var(--terracota);
+    stroke-width: 16;
+    stroke-dasharray: 1;  /* Truco para "dibujar" la línea */
+    stroke-dashoffset: 1;
+  }
+  /* Las líneas se dibujan cuando la sección entra en pantalla */
+  .patron.visible path {
+    animation: dibujar 1.6s ease-out forwards;
+  }
+
+  /* Marco oliva con la foto */
+  .marco {
+    position: relative;
+    z-index: 1;
+    width: 72%;
+    aspect-ratio: 3 / 4;
+    margin: 0;
+    border: 10px solid var(--olive);
+    background: var(--crema);
+    overflow: hidden;
+  }
+  .marco img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Recorta la foto para llenar el marco sin deformarla */
+    transition: transform 0.6s var(--ease);
+  }
+  .marco:hover img {
+    transform: scale(1.05); /* Zoom suave al pasar el mouse */
+  }
+
+  @keyframes dibujar {
+    to { stroke-dashoffset: 0; }
+  }
+
+  /* ---------- CELULAR: texto arriba, foto abajo ---------- */
+  @media (max-width: 768px) {
+    .sobre-mi {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .sobre-mi__texto { padding: 10vh 1.5rem 3rem; }
+    .sobre-mi__visual {
+      min-height: 75vh;
+      margin: 0 1.5rem 3rem;
+    }
+    .marco {
+      width: 70%;
+      max-width: 320px;
+    }
+  }
+</style>

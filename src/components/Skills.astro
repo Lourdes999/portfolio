@@ -1,0 +1,372 @@
+---
+// Skills.astro — Sección "Habilidades"
+
+// ===== NOMBRES CORTOS DE LOS PROYECTOS (para el "Usado en") =====
+const CATALOGO = 'Catálogo web';
+const VENTAS = 'Sistema de ventas';
+const RED = 'Red Emprendedora';
+
+// ===== DATOS (editá acá sin tocar el diseño) =====
+// usado: proyectos donde aplicaste la habilidad (muestra el cartelito al pasar el mouse)
+// aprendiendo: true → la etiqueta aparece con borde punteado
+type Habilidad = { nombre: string; usado?: string[]; aprendiendo?: boolean };
+type Grupo = { nombre: string; items: Habilidad[] };
+
+const grupos: Grupo[] = [
+  {
+    nombre: 'Lenguajes',
+    items: [
+      { nombre: 'Python', usado: [CATALOGO, VENTAS, RED] },
+      { nombre: 'Java', aprendiendo: true },
+      { nombre: 'JavaScript', usado: [CATALOGO], aprendiendo: true },
+      { nombre: 'SQL', usado: [VENTAS, RED] },
+    ],
+  },
+  {
+    nombre: 'Web',
+    items: [
+      { nombre: 'HTML', usado: [CATALOGO, RED] },
+      { nombre: 'CSS', usado: [CATALOGO, RED] },
+    ],
+  },
+  {
+    nombre: 'Bases de datos',
+    items: [
+      { nombre: 'SQL Server', usado: [VENTAS] },
+      { nombre: 'PostgreSQL', usado: [RED] },
+      { nombre: 'Modelado de BD', usado: [VENTAS, RED] },
+    ],
+  },
+  {
+    nombre: 'Datos y procesos',
+    items: [
+      { nombre: 'Procesos ETL' },
+      { nombre: 'Automatización', usado: [VENTAS] },
+      { nombre: 'Organización de datos', usado: [VENTAS, RED] },
+    ],
+  },
+  {
+    nombre: 'Diseño',
+    items: [
+      { nombre: 'Interfaces web', usado: [CATALOGO] },
+      { nombre: 'Organización visual', usado: [CATALOGO] },
+      { nombre: 'Catálogos digitales', usado: [CATALOGO] },
+    ],
+  },
+  {
+    nombre: 'Herramientas',
+    items: [
+      { nombre: 'Git', usado: [RED] },
+      { nombre: 'GitHub', usado: [RED] },
+      { nombre: 'VS Code' },
+      { nombre: 'IntelliJ IDEA' },
+      { nombre: 'pgAdmin' },
+      { nombre: 'SSMS' },
+    ],
+  },
+];
+
+// Lo que estás profundizando ahora
+const profundizando = ['Desarrollo backend', 'Integración entre aplicaciones y bases de datos'];
+
+// Habilidades blandas (máximo tres)
+const blandas = [
+  { nombre: 'Resolución de problemas', detalle: 'Entender la necesidad antes de escribir código.' },
+  { nombre: 'Creatividad', detalle: 'Combinar funcionalidad y diseño en cada proyecto.' },
+  { nombre: 'Trabajo en equipo', detalle: 'Integrando mis tareas con las del equipo en Red Emprendedora.' },
+];
+
+// La cinta en movimiento usa todas las habilidades técnicas
+const cinta = grupos.flatMap((g) => g.items.map((h) => h.nombre));
+
+const dosDigitos = (n: number) => String(n).padStart(2, '0');
+---
+<section class="seccion habilidades" id="habilidades">
+  <div class="habilidades__contenido">
+
+    <!-- ===== ENCABEZADO: título + "profundizando" ===== -->
+    <header class="habilidades__encabezado">
+      <h2 class="habilidades__titulo reveal">Habilidades</h2>
+
+      <div class="profundizando reveal" style="transition-delay: 0.15s">
+        <span class="profundizando__titulo">Hoy estoy profundizando en</span>
+        <p>{profundizando.join(' · ')}</p>
+      </div>
+    </header>
+
+    <!-- ===== LEYENDA: explica los dos tipos de etiqueta ===== -->
+    <p class="leyenda reveal" style="transition-delay: 0.25s">
+      <span class="leyenda__item"><span class="muestra muestra--usada"></span>Pasá el mouse para ver dónde lo usé</span>
+      <span class="leyenda__item"><span class="muestra muestra--aprendiendo"></span>Aprendiendo</span>
+    </p>
+
+    <!-- ===== GRUPOS DE HABILIDADES ===== -->
+    <div class="grupos">
+      {grupos.map((g, i) => (
+        <div class="grupo reveal" style={`transition-delay: ${0.1 + i * 0.08}s`}>
+          <p class="grupo__titulo">
+            <span class="grupo__numero">{dosDigitos(i + 1)}</span>
+            {g.nombre}
+          </p>
+          <ul class="etiquetas">
+            {g.items.map((h) => (
+              <li>
+                <span
+                  class:list={['etiqueta', { 'etiqueta--usada': h.usado, 'etiqueta--aprendiendo': h.aprendiendo }]}
+                  data-usado={h.usado ? `Usado en: ${h.usado.join(', ')}` : undefined}
+                  tabindex={h.usado ? 0 : undefined}
+                >{h.nombre}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <!-- ===== HABILIDADES BLANDAS ===== -->
+    <ul class="blandas">
+      {blandas.map((b, i) => (
+        <li class="reveal" style={`transition-delay: ${0.2 + i * 0.1}s`}>
+          <strong>{b.nombre}</strong>
+          <span>{b.detalle}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <!-- ===== CINTA EN MOVIMIENTO (decorativa) ===== -->
+  <div class="cinta" aria-hidden="true">
+    <div class="cinta__pista">
+      {[...cinta, ...cinta].map((nombre) => <span>{nombre}</span>)} <!-- Duplicada para que el loop no se corte -->
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ---------- ESTRUCTURA ---------- */
+  .habilidades {
+    display: flex;
+    flex-direction: column;
+    background: var(--arena);
+    color: var(--tinta);
+  }
+  .habilidades__contenido {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3.5vh;
+    padding: 12vh 8.6vw 4vh 5.6vw; /* Derecha más ancha: lugar para los puntitos */
+  }
+
+  /* ---------- ENCABEZADO ---------- */
+  .habilidades__encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+  .habilidades__titulo {
+    font-family: var(--fuente-titulo);
+    font-weight: 500;
+    color: var(--chile-rojo);
+    font-size: clamp(3rem, 6.5vw, 8rem);
+    letter-spacing: -0.045em;
+    line-height: 1;
+  }
+
+  /* Recuadro punteado = "aprendiendo" (mismo código visual que las etiquetas) */
+  .profundizando {
+    max-width: 26rem;
+    padding: 1rem 1.4rem;
+    border: 2px dashed var(--chile-rojo);
+    border-radius: 12px;
+  }
+  .profundizando__titulo {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--chile-rojo);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .profundizando p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  /* ---------- LEYENDA ---------- */
+  .leyenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    font-size: 0.8rem;
+    opacity: 0.8;
+  }
+  .leyenda__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .muestra--usada { /* Puntito */
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--chile-rojo);
+  }
+  .muestra--aprendiendo { /* Mini etiqueta punteada */
+    width: 22px;
+    height: 12px;
+    border: 2px dashed var(--chile-rojo);
+    border-radius: 999px;
+  }
+
+  /* ---------- GRUPOS ---------- */
+  .grupos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem 3rem;
+  }
+  .grupo {
+    padding-top: 1rem;
+    border-top: 2px solid var(--chile-rojo);
+  }
+  .grupo__titulo {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .grupo__numero {
+    font-family: var(--fuente-titulo);
+    font-weight: 500;
+    font-size: 1.6rem;
+    letter-spacing: 0;
+    color: var(--terracota);
+  }
+
+  /* Etiquetas un poco más chicas en esta sección */
+  .habilidades .etiqueta {
+    padding: 0.4rem 0.95rem;
+    font-size: 0.85rem;
+  }
+
+  /* Etiqueta "aprendiendo": borde punteado */
+  .etiqueta--aprendiendo {
+    border-style: dashed;
+  }
+
+  /* Etiqueta usada en proyectos: puntito + cartel al pasar el mouse */
+  .etiqueta--usada {
+    position: relative;
+    cursor: help;
+  }
+  .etiqueta--usada::before { /* Puntito */
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 0.5rem;
+    border-radius: 50%;
+    background: currentColor;
+    vertical-align: middle;
+  }
+  .etiqueta--usada::after { /* Cartel "Usado en: ..." */
+    content: attr(data-usado);
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    z-index: 5;
+    width: max-content;
+    max-width: 220px;
+    padding: 0.45rem 0.8rem;
+    border-radius: 8px;
+    background: var(--tinta);
+    color: var(--crema);
+    font-size: 0.78rem;
+    line-height: 1.4;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 6px);
+    transition: opacity 0.25s, transform 0.25s var(--ease);
+  }
+  .etiqueta--usada:hover::after,
+  .etiqueta--usada:focus-visible::after {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  /* ---------- HABILIDADES BLANDAS ---------- */
+  .blandas {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    padding-top: 2vh;
+    border-top: 1px solid rgba(74, 59, 47, 0.2);
+  }
+  .blandas strong {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-family: var(--fuente-titulo);
+    font-weight: 500;
+    font-size: 1.1rem;
+    color: var(--chile-rojo);
+  }
+  .blandas span {
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+
+  /* ---------- CINTA EN MOVIMIENTO ---------- */
+  .cinta {
+    margin: 1vh -2vw 4vh;       /* Más ancha que la pantalla para que no se vean las puntas */
+    padding: 0.9rem 0;
+    background: var(--chile-rojo);
+    color: var(--crema);
+    overflow: hidden;
+    transform: rotate(-1.5deg); /* Levemente inclinada */
+  }
+  .cinta__pista {
+    display: flex;
+    width: max-content;
+    animation: desfile 45s linear infinite; /* Velocidad: más segundos = más lento */
+  }
+  .cinta__pista span {
+    font-family: var(--fuente-titulo);
+    font-weight: 500;
+    font-size: clamp(1.4rem, 2.4vw, 2.4rem);
+    white-space: nowrap;
+    padding-left: 1.2rem;
+  }
+  .cinta__pista span::after { /* Separador "//" como en la portada */
+    content: '//';
+    margin-left: 1.2rem;
+    opacity: 0.5;
+  }
+  .cinta:hover .cinta__pista {
+    animation-play-state: paused; /* Se frena al pasar el mouse */
+  }
+
+  @keyframes desfile {
+    to { transform: translateX(-50%); } /* Recorre media pista (una copia): el loop no se nota */
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cinta__pista { animation: none; }
+  }
+
+  /* ---------- CELULAR ---------- */
+  @media (max-width: 768px) {
+    .habilidades__contenido { padding: 10vh 2.5rem 3vh 1.5rem; }
+    .grupos,
+    .blandas {
+      grid-template-columns: 1fr;
+      gap: 1.8rem;
+    }
+  }
+</style>

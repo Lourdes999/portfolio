@@ -1,0 +1,16 @@
+/*
+  Paleta Rosa-Vino.
+  Todos los colores del sitio se definen ACÁ, una sola vez.
+  Si el día de mañana cambiamos la colorimetría, este es el
+  único archivo que hay que tocar.
+*/
+:root{
+  --linho:  #EDE6DE; /* fondo / papel */
+  --oliva:  #CDBA7B; /* carpeta "Sobre mí" */
+  --blush:  #E6C5CA; /* carpeta "Proyectos" */
+  --rosa:   #B45A69; /* carpeta "Habilidades" */
+  --vinho:  #6C1C37; /* carpeta "Contacto" */
+
+  --grid-line: rgba(108, 28, 55, 0.14);
+  --ink: #3A2530;
+}

@@ -1,0 +1,283 @@
+---
+// Contact.astro — Sección "Contacto" (cierre del portfolio)
+
+// ===== DATOS (editá acá sin tocar el diseño) =====
+const email = 'lourdesmelo999@gmail.com';
+
+// Abre Gmail con un mensaje nuevo, tu mail como destinatario y el asunto ya escrito
+const gmail = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${encodeURIComponent('Contacto desde tu portfolio')}`;
+
+const enlaces = [
+  { nombre: 'LinkedIn', url: 'https://www.linkedin.com/in/lourdes-melo-12958920a/' },
+  { nombre: 'GitHub', url: 'https://github.com/Lourdes999' },
+];
+const cv = '/cv-lourdes-melo.pdf'; // Archivo en public/
+const anio = new Date().getFullYear(); // Se actualiza solo
+---
+<section class="seccion contacto" id="contacto">
+
+  <!-- ===== ESPIRALES (vuelven las de la portada, se dibujan al llegar) ===== -->
+  <svg class="espirales reveal" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <!-- Espiral grande a la derecha -->
+    <path
+      pathLength="1"
+      d="M1920,260 C1720,220 1540,330 1560,500 C1580,660 1780,690 1800,560
+         C1820,430 1620,410 1540,560 C1460,710 1540,930 1720,1080"
+    />
+    <!-- Arco chico abajo -->
+    <path pathLength="1" d="M1100,1080 C1150,960 1300,930 1330,1080" style="animation-delay: 0.6s" />
+  </svg>
+
+  <!-- ===== CONTENIDO ===== -->
+  <div class="contacto__contenido">
+    <h2 class="contacto__titulo reveal">Contacto</h2>
+
+    <span class="disponible reveal" style="transition-delay: 0.1s">Disponible · Remoto y presencial</span>
+
+    <p class="contacto__invitacion reveal" style="transition-delay: 0.2s">
+      ¿Tenés un proyecto, un equipo o una idea? Hablemos.
+    </p>
+    <p class="contacto__texto reveal" style="transition-delay: 0.3s">
+      Estoy buscando empleo en desarrollo de software y también estoy abierta a colaborar en proyectos freelance.
+    </p>
+
+    <!-- Email grande (abre Gmail) + botón para copiarlo -->
+    <div class="email reveal" style="transition-delay: 0.4s">
+      <a class="email__link" href={gmail} target="_blank" rel="noopener">{email}</a>
+      <button class="email__copiar" type="button" data-email={email}>Copiar</button>
+    </div>
+
+    <!-- Redes y CV -->
+    <ul class="enlaces reveal" style="transition-delay: 0.5s">
+      {enlaces.map((e) => (
+        <li><a class="boton-contacto" href={e.url} target="_blank" rel="noopener">{e.nombre} ↗</a></li>
+      ))}
+      <li><a class="boton-contacto boton-contacto--lleno" href={cv} download>Descargar CV ↓</a></li>
+    </ul>
+  </div>
+
+  <!-- ===== PIE DE PÁGINA ===== -->
+  <footer class="pie">
+    <span>© {anio} Lourdes Melo</span>
+    <a class="pie__volver" href="#portada">Volver al inicio ↑</a>
+  </footer>
+</section>
+
+<style>
+  /* ---------- ESTRUCTURA ---------- */
+  .contacto {
+    display: flex;
+    flex-direction: column;
+    background: var(--olive);
+    color: var(--crema);
+  }
+  .contacto__contenido {
+    position: relative;
+    z-index: 1; /* Por encima de las espirales */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    max-width: 75rem;
+    padding: 12vh 8.6vw 4vh 5.6vw;
+  }
+
+  /* ---------- ESPIRALES ---------- */
+  .espirales {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .espirales path {
+    fill: none;
+    stroke: var(--chile-rojo);
+    stroke-width: 9;
+    stroke-linecap: round;
+    stroke-dasharray: 1;  /* Truco para "dibujar" la línea */
+    stroke-dashoffset: 1;
+  }
+  .espirales.visible path {
+    animation: dibujar 2.5s ease-in-out forwards;
+  }
+
+  /* ---------- TÍTULO (con la misma sombra que "portfolio") ---------- */
+  .contacto__titulo {
+    margin-bottom: 2rem;
+    font-family: var(--fuente-titulo);
+    font-weight: 500;
+    color: var(--chile-rojo);
+    font-size: clamp(3rem, 6.5vw, 8rem);
+    letter-spacing: -0.045em;
+    line-height: 1;
+    text-shadow: 0.025em 0.02em 0 var(--olive-claro);
+  }
+
+  /* ---------- "DISPONIBLE" con puntito que late ---------- */
+  .disponible {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+    padding: 0.35rem 1rem;
+    border: 1.5px solid var(--crema);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .disponible::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--crema);
+    animation: latido 1.4s ease-in-out infinite;
+  }
+
+  /* ---------- TEXTOS ---------- */
+  .contacto__invitacion {
+    max-width: 22ch;
+    margin-bottom: 1rem;
+    font-family: var(--fuente-titulo);
+    font-size: clamp(1.4rem, 2.4vw, 2.6rem);
+    line-height: 1.25;
+  }
+  .contacto__texto {
+    max-width: 38rem;
+    margin-bottom: 3rem;
+    font-size: clamp(1rem, 1.1vw, 1.15rem);
+    line-height: 1.6;
+    opacity: 0.9;
+  }
+
+  /* ---------- EMAIL ---------- */
+  .email {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.2rem;
+    margin-bottom: 2.5rem;
+  }
+  .email__link {
+    padding-bottom: 0.1em;
+    font-family: var(--fuente-titulo);
+    font-weight: 500;
+    font-size: clamp(1.5rem, 4vw, 4.6rem);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    overflow-wrap: anywhere; /* En celular corta el mail en vez de desbordarse */
+    /* Subrayado que se "dibuja" al pasar el mouse */
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 3px;
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    transition: background-size 0.5s var(--ease);
+  }
+  .email__link:hover {
+    background-size: 100% 3px;
+  }
+
+  .email__copiar {
+    padding: 0.6rem 1.3rem;
+    border: 2px solid var(--crema);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--crema);
+    font-family: var(--fuente-texto);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+  }
+  .email__copiar:hover,
+  .email__copiar.copiado {
+    background: var(--crema);
+    color: var(--chile-rojo);
+  }
+
+  /* ---------- BOTONES DE REDES Y CV ---------- */
+  .enlaces {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+  }
+  .boton-contacto {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    border: 2px solid var(--crema);
+    border-radius: 999px;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  }
+  .boton-contacto--lleno {
+    background: var(--chile-rojo);
+    border-color: var(--chile-rojo);
+  }
+  /* Se "levanta" con sombra roja, como las etiquetas */
+  .boton-contacto:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 3px 3px 0 var(--chile-rojo);
+  }
+  .boton-contacto--lleno:hover {
+    box-shadow: 3px 3px 0 var(--crema);
+  }
+
+  /* ---------- PIE DE PÁGINA ---------- */
+  .pie {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    padding: 1.5rem 8.6vw 2rem 5.6vw;
+    border-top: 1px solid rgba(244, 239, 228, 0.25);
+    font-size: 0.8rem;
+    opacity: 0.85;
+  }
+  .pie__volver:hover {
+    text-decoration: underline;
+  }
+
+  /* ---------- ANIMACIONES ---------- */
+  @keyframes dibujar {
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes latido {
+    50% { opacity: 0.3; transform: scale(0.7); }
+  }
+
+  /* ---------- CELULAR ---------- */
+  @media (max-width: 768px) {
+    .contacto__contenido { padding: 10vh 2.5rem 3vh 1.5rem; }
+    .espirales { opacity: 0.4; } /* Más suaves para no tapar el texto */
+    .pie {
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 1.2rem 2.5rem 1.5rem 1.5rem;
+    }
+  }
+</style>
+
+<script>
+  // Botón "Copiar": copia el email y muestra la confirmación por 2 segundos
+  const boton = document.querySelector<HTMLButtonElement>('.email__copiar')!;
+
+  boton.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(boton.dataset.email ?? '');
+      boton.textContent = '¡Copiado!';
+      boton.classList.add('copiado');
+    } catch {
+      boton.textContent = 'No se pudo copiar';
+    }
+    setTimeout(() => {
+      boton.textContent = 'Copiar';
+      boton.classList.remove('copiado');
+    }, 2000);
+  });
+</script>

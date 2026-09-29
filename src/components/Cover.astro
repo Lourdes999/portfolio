@@ -1,0 +1,88 @@
+---
+const { nombre = 'Lourdes Melo' } = Astro.props;
+---
+<section class="cover" id="s0">
+  <div class="cover-inner">
+    <span class="tw eyebrow">Portfolio — Desarrollo de software</span>
+    <h1 id="nombre">{nombre}</h1>
+    <p class="sub tw">Deslizá hacia abajo para conocer cada carpeta.</p>
+  </div>
+  <div class="stack">
+    <button class="tab" onclick="jump('s1')">SOBRE MÍ</button>
+    <button class="tab" onclick="jump('s2')">PROYECTOS</button>
+    <button class="tab" onclick="jump('s3')">HABILIDADES</button>
+    <button class="tab" onclick="jump('s4')">CONTACTO</button>
+  </div>
+</section>
+
+<style>
+  .cover{
+    background:
+      linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0/28px 28px,
+      var(--linho);
+    padding:0 8vw;
+    overflow:hidden;
+  }
+  .cover-inner{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    color:var(--rosa);
+  }
+  .cover h1{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:clamp(56px, 8vw, 96px);
+    line-height:1.02;
+    color:var(--vinho);
+  }
+  .cover h1 :global(.letter){
+    display:inline-block;
+    animation:colorWave 2.6s ease-in-out infinite;
+  }
+  @keyframes colorWave{
+    0%, 100%{ color:var(--oliva); }
+    33%{ color:var(--rosa); }
+    66%{ color:var(--vinho); }
+  }
+  .sub{
+    font-weight:500;
+    font-size:17px;
+    color:#6b5560;
+    margin-top:10px;
+  }
+
+  .stack{
+    display:flex;
+    justify-content:center;
+    align-items:flex-end;
+    width:100%;
+    gap:0;
+  }
+  .stack .tab{
+    flex:1;
+    max-width:260px;
+    font-size:16px;
+    padding:26px 20px;
+    min-height:96px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:14px 14px 0 0;
+  }
+  .stack .tab:hover{ padding-top:40px; }
+  .stack .tab:active{ padding-top:32px; }
+  .stack .tab:nth-child(1){ --c:var(--oliva); --tc:var(--ink); }
+  .stack .tab:nth-child(2){ --c:var(--blush); --tc:var(--ink); }
+  .stack .tab:nth-child(3){ --c:var(--rosa); --tc:#fff; }
+  .stack .tab:nth-child(4){ --c:var(--vinho); --tc:#fff; }
+</style>

@@ -1,0 +1,104 @@
+---
+// Nav.astro — Puntitos laterales de navegación
+// Para agregar o renombrar secciones, editá solo esta lista
+const secciones = [
+  { id: 'portada',     nombre: 'Inicio' },
+  { id: 'sobre-mi',    nombre: 'Sobre mí' },
+  { id: 'proyectos',   nombre: 'Proyectos' },
+  { id: 'habilidades', nombre: 'Habilidades' },
+  { id: 'contacto',    nombre: 'Contacto' },
+];
+---
+<nav class="puntos" aria-label="Secciones del portfolio">
+  <ul>
+    {secciones.map((s) => (
+      <li>
+        <a href={`#${s.id}`} data-seccion={s.id} aria-label={s.nombre}>
+          <span class="etiqueta">{s.nombre}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  /* Contenedor fijo al costado derecho, centrado vertical */
+  .puntos {
+    position: fixed;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+  }
+  .puntos ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  /* Cada punto */
+  .puntos a {
+    position: relative;
+    display: block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--chile-rojo);
+    transition: background var(--transicion), box-shadow var(--transicion);
+  }
+  .puntos a:hover {
+    background: var(--terracota);
+  }
+  /* Punto de la sección actual */
+  .puntos a.activo {
+    background: var(--chile-rojo);
+    box-shadow: 0 0 0 4px rgba(174, 67, 30, 0.25);
+  }
+
+  /* Nombre que aparece al pasar el mouse */
+  .etiqueta {
+    position: absolute;
+    right: calc(100% + 0.8rem);
+    top: 50%;
+    transform: translate(10px, -50%);
+    white-space: nowrap;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    background: var(--chile-rojo);
+    color: var(--crema);
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s var(--ease);
+  }
+  .puntos a:hover .etiqueta,
+  .puntos a:focus-visible .etiqueta {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+
+  /* Celular: puntos más pegados al borde, sin etiquetas */
+  @media (max-width: 768px) {
+    .puntos { right: 0.6rem; }
+    .etiqueta { display: none; }
+  }
+</style>
+
+<script>
+  // Marca como "activo" el punto de la sección que está en pantalla
+  const enlaces = document.querySelectorAll<HTMLAnchorElement>('.puntos a');
+
+  const obs = new IntersectionObserver((entradas) => {
+    entradas.forEach((entrada) => {
+      if (!entrada.isIntersecting) return;
+      enlaces.forEach((a) =>
+        a.classList.toggle('activo', a.dataset.seccion === entrada.target.id)
+      );
+    });
+  }, { threshold: 0.6 });
+
+  document.querySelectorAll('.seccion').forEach((s) => obs.observe(s));
+</script>
